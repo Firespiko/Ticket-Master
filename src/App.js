@@ -8,7 +8,7 @@ import Card from './components/Card'
 import SeatChart from './components/SeatChart'
 
 // ABIs
-import TokenMaster from './abis/TokenMaster.json'
+import TicketMaster from './abis/TicketMaster.json'
 
 // Config
 import config from './config.json'
@@ -17,10 +17,10 @@ function App() {
   const [provider, setProvider] = useState(null)
   const [account, setAccount] = useState(null)
 
-  const [tokenMaster, setTokenMaster] = useState(null)
-  const [occasions, setOccasions] = useState([])
+  const [ticketMaster, setTicketMaster] = useState(null)
+  const [ocassions, setOcassions] = useState([])
 
-  const [occasion, setOccasion] = useState({})
+  const [ocassion, setOcassion] = useState({})
   const [toggle, setToggle] = useState(false)
 
   const loadBlockchainData = async () => {
@@ -28,18 +28,18 @@ function App() {
     setProvider(provider)
 
     const network = await provider.getNetwork()
-    const tokenMaster = new ethers.Contract(config[network.chainId].TokenMaster.address, TokenMaster, provider)
-    setTokenMaster(tokenMaster)
+    const ticketMaster = new ethers.Contract(config[network.chainId].TicketMaster.address, TicketMaster, provider)
+    setTicketMaster(ticketMaster)
 
-    const totalOccasions = await tokenMaster.totalOccasions()
-    const occasions = []
+    const totalOcassions = await ticketMaster.totalOcassions()
+    const ocassions = []
 
-    for (var i = 1; i <= totalOccasions; i++) {
-      const occasion = await tokenMaster.getOccasion(i)
-      occasions.push(occasion)
+    for (var i = 1; i <= totalOcassions; i++) {
+      const ocassion = await ticketMaster.getOcassion(i)
+      ocassions.push(ocassion)
     }
 
-    setOccasions(occasions)
+    setOcassions(ocassions)
 
     window.ethereum.on('accountsChanged', async () => {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
@@ -63,16 +63,16 @@ function App() {
       <Sort />
 
       <div className='cards'>
-        {occasions.map((occasion, index) => (
+        {ocassions.map((ocassion, index) => (
           <Card
-            occasion={occasion}
+            ocassion={ocassion}
             id={index + 1}
-            tokenMaster={tokenMaster}
+            ticketMaster={ticketMaster}
             provider={provider}
             account={account}
             toggle={toggle}
             setToggle={setToggle}
-            setOccasion={setOccasion}
+            setOcassion={setOcassion}
             key={index}
           />
         ))}
@@ -80,8 +80,8 @@ function App() {
 
       {toggle && (
         <SeatChart
-          occasion={occasion}
-          tokenMaster={tokenMaster}
+          ocassion={ocassion}
+          ticketMaster = {ticketMaster}
           provider={provider}
           setToggle={setToggle}
         />
